@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Build Your House: Math Architect</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#E9EEF0;--card:#FBFCFC;--ink:#1B2A41;--mute:#5B6B7C;--line:#C5D0D8;--acc:#E0A526;--accInk:#1B2A41;--ok:#2E8B57;--bad:#C0392B;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#101820;--card:#1A2530;--ink:#EAF0F4;--mute:#9FB0BF;--line:#33424F;--ok:#5BC68A;--bad:#FF7A6B}}
+:root[data-theme="dark"]{--bg:#101820;--card:#1A2530;--ink:#EAF0F4;--mute:#9FB0BF;--line:#33424F;--ok:#5BC68A;--bad:#FF7A6B}
+*{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Bricolage Grotesque",system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.45;min-height:100vh}
+main{max-width:1000px;margin:0 auto;padding:18px 16px 40px}
+h1{font-size:clamp(26px,5vw,42px);font-weight:800;margin:0;letter-spacing:-.02em}
+h2{font-size:clamp(19px,3vw,25px);margin:0 0 12px;font-weight:600}
+h3{font-size:15px;margin:14px 0 8px;color:var(--mute);font-weight:600}
+p{margin:0 0 12px;color:var(--mute)}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.card{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:16px}
+button{font:inherit;cursor:pointer;color:var(--ink)}
+input{width:100%;font:inherit;font-size:18px;padding:12px 14px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);margin-bottom:12px}
+input:focus,button:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.primary{background:var(--acc);color:var(--accInk);border:0;border-radius:10px;padding:12px 20px;font-weight:600;font-size:17px}
+.ghost{background:transparent;border:1.5px solid var(--line);border-radius:10px;padding:10px 16px;font-size:16px}
+.ghost:hover{border-color:var(--acc)}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.start{max-width:520px;margin:6vh auto 0}
+.grid{display:grid;grid-template-columns:1.15fr 1fr;gap:16px;align-items:start}
+@media (max-width:760px){.grid{grid-template-columns:1fr}}
+svg{width:100%;height:auto;display:block;border-radius:10px}
+.bar{display:flex;gap:4px;margin:0 0 14px}
+.bar i{flex:1;height:8px;border-radius:4px;background:var(--line)}
+.bar i.d{background:var(--ok)}.bar i.n{background:var(--acc)}
+.meta{color:var(--mute);font-size:14px;margin-bottom:6px}
+.ans{display:grid;gap:10px}
+.ans button{text-align:left;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:12px 14px;font-size:17px}
+.ans button:hover:not(:disabled){border-color:var(--acc)}
+.ans button.ok{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 18%,var(--card))}
+.ans button.bad{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 18%,var(--card))}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips button{background:var(--bg);border:1.5px solid var(--line);border-radius:999px;padding:8px 14px;font-size:15px}
+.chips button.sel{border-color:var(--acc);background:color-mix(in srgb,var(--acc) 25%,var(--card));font-weight:600}
+.sws{display:flex;flex-wrap:wrap;gap:10px}
+.sws button{width:38px;height:38px;border-radius:50%;border:3px solid var(--card);box-shadow:0 0 0 1.5px var(--line);padding:0}
+.sws button.sel{box-shadow:0 0 0 3px var(--acc)}
+.msg{font-weight:600;margin:12px 0 0}.msg.ok{color:var(--ok)}.msg.bad{color:var(--bad)}
+.center{text-align:center}
+.score{font-size:20px;color:var(--ink);font-weight:600}
+.lb{display:grid;gap:10px}
+.lbr{display:grid;grid-template-columns:34px 120px 1fr auto;gap:12px;align-items:center;padding:10px;border:1.5px solid var(--line);border-radius:12px;background:var(--card)}
+.lbr.me{border-color:var(--acc)}
+.rk{font-size:22px;font-weight:800;text-align:center}
+.nm{font-weight:600;font-size:18px;word-break:break-word}
+@media (max-width:520px){.lbr{grid-template-columns:28px 80px 1fr}.lbr button{grid-column:1/-1}}
+.det{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:6px 14px;font-size:15px}
+.det span{display:flex;align-items:center;gap:8px}
+.dot{width:14px;height:14px;border-radius:50%;box-shadow:0 0 0 1.5px var(--line);flex:none}
+@media (prefers-reduced-motion:no-preference){svg g.new{animation:pop .5s ease-out}@keyframes pop{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:none}}}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script>
+var A=["#F0E3C4","#A9BFA0","#A9C7DD","#E8B9B0","#5C6670","#B83A3A","#2E8B8B","#E3B23C"],
+B=["#B5533C","#46515E","#6B3F5C","#2F5D46","#C9A66B","#2B2B2B","#3F6FB5","#8B5A2B"],
+G=["#7DBE5A","#5FA04A","#8C9A4B","#3F9B62","#A5D152","#D2762B","#F0A5C0","#1F5B45"],
+F=["#E04848","#F5CF3A","#8E5BC2","#F28CB1","#FFFFFF","#FF8A3D","#4F8EF7","#E86AC1"],
+Sk=["#BFE3F7","#F6C28B","#E5C7E8","#CBD3DA","#7F8FC2","#1F2A4D","#FFD9A0","#A8E0D0"],PAL={A:A,B:B,G:G,F:F,S:Sk};
+var PT=[
+["floor","foundation","B",["Flat slab","Raised plinth","Stilts","Stepped base","Stone footing"]],
+["walls","walls","A",["Smooth","Brick","Wood planks","Stone blocks","Siding"]],
+["door","front door","A",["Classic","Arched","Double","Glass panel","Porthole"]],
+["win","windows","A",["Square","Arched","Round","Wide","Tall"]],
+["roof","roof","B",["Gable","Steep","Flat","Hip","Dome"]],
+["chim","chimney","B",["Tall","Wide","Twin","Short with smoke","Capped"]],
+["path","garden path","B",["Straight","Winding","Stepping stones","Wide","Pebbles"]],
+["lawn","lawn","G",["Flat","Hills","Stripes","Tufts","Rolling"]],
+["fence","fence","B",["Picket","Rails","Low wall","Hedge","Wire"]],
+["tree","tree","G",["Round","Pine","Oval","Grove","Blossom"]],
+["flow","flowers","F",["Blooms","Tulips","Daisies","Bushes","Sunflowers"]],
+["sky","sky","S",["Clear","Clouds","Sun","Moon and stars","Rainbow"]],
+["mail","mailbox","A",["Classic","With flag","Wall mount","Round","Tall post"]],
+["pots","plants","A",["Two pots","Pots with vines","Window boxes","Barrels","Urns"]],
+["vane","roof topper","B",["Arrow","Flag","Star","Ball","Antenna"]]];
+var Q=[
+["How many sides does a square have?",["3","4","5","6"],1],
+["A wall is 4 m long and 3 m high. What is its area?",["7 m²","12 m²","14 m²","24 m²"],1],
+["A room is 5 m by 3 m. What is its perimeter?",["8 m","15 m","16 m","30 m"],2],
+["What do the three angles of any triangle add up to?",["90°","180°","270°","360°"],1],
+["A triangular roof end has a base of 8 m and a height of 3 m. What is its area?",["11 m²","12 m²","24 m²","48 m²"],1],
+["A 6 m by 4 m floor is covered with square tiles of 0.5 m by 0.5 m. How many tiles are needed?",["24","48","96","120"],2],
+["A ladder base is 5 m from a wall and it reaches 12 m up the wall. How long is the ladder?",["13 m","15 m","17 m","7 m"],0],
+["A plan is drawn at scale 1:50. A wall measures 6 cm on the plan. How long is the real wall?",["3 m","30 m","56 m","300 m"],0],
+["A round window has a radius of 0.5 m. What is its area (use π ≈ 3.14)?",["0.79 m²","1.57 m²","3.14 m²","0.25 m²"],0],
+["A room is 5 m long, 4 m wide and 2.5 m high. What is its volume?",["11.5 m³","40 m³","50 m³","100 m³"],2],
+["One litre of paint covers 10 m². Walls total 45 m² and need 2 coats. How many litres?",["4.5 L","9 L","18 L","90 L"],1],
+["The golden ratio, often used in architecture, is about…",["1.414","1.618","2.718","3.141"],1],
+["A round column has a radius of 0.3 m and a height of 3 m. What is its volume (π ≈ 3.14)?",["0.28 m³","0.85 m³","2.83 m³","5.65 m³"],1],
+["A roof rafter runs 9 m horizontally and rises 12 m. How long is the rafter?",["15 m","21 m","17 m","108 m"],0],
+["A cone-shaped tower roof has a base radius of 3 m and a slant height of 5 m. What is its curved surface area (π ≈ 3.14)?",["15 m²","28.3 m²","47.1 m²","94.2 m²"],2]];
+var DF={floor:[0,"#8E8E93"],walls:[0,"#E8D8B8"],door:[0,"#7A4B2A"],win:[0,"#FFFFFF"],roof:[0,"#B5533C"]};
+var DK="rgba(0,0,0,.2)",BR="#6B4A2E",GL="#BFE3F2",GR="#3E8E41",RY=[48,22,106,70,57];
+var R=function(x,y,w,h,f){return '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="'+f+'"/>'},
+Ci=function(x,y,r,f){return '<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="'+f+'"/>'},
+Ep=function(x,y,a,b,f){return '<ellipse cx="'+x+'" cy="'+y+'" rx="'+a+'" ry="'+b+'" fill="'+f+'"/>'},
+Pg=function(p,f){return '<polygon points="'+p+'" fill="'+f+'"/>'},
+Ln=function(d,c,w){return '<path d="'+d+'" stroke="'+c+'" stroke-width="'+(w||1)+'" fill="none"/>'};
+var D={
+sky:function(s,c){var h=R(0,0,400,300,c),i;
+if(s==1)h+=[[70,50],[250,40],[330,85]].map(function(p){return '<g fill="#fff" opacity=".85">'+Ep(p[0],p[1],30,10,"#fff")+Ep(p[0]+14,p[1]-8,18,10,"#fff")+'</g>'}).join("");
+if(s==2)h+=Ci(55,50,36,"#FFE27A66")+Ci(55,50,22,"#FFD84D");
+if(s==3)h+=Ci(60,52,20,"#F5F0D0")+[[150,30],[220,60],[300,25],[350,70],[120,85]].map(function(p){return Ci(p[0],p[1],2,"#fff")}).join("");
+if(s==4)["#E04848","#F5CF3A","#4CAF50","#4F8EF7"].forEach(function(k,i){var r=190-i*11;h+=Ln('M'+(200-r)+' 240A'+r+' '+r+' 0 0 1 '+(200+r)+' 240',k,10)});
+return h},
+lawn:function(s,c){var h=R(0,228,400,72,c),i;
+if(s==1)h+=Ep(70,232,120,18,c)+Ep(340,234,110,16,c);
+if(s==2)for(i=0;i<8;i+=2)h+=R(i*50,228,50,72,DK);
+if(s==3)for(i=0;i<14;i++)h+=Ep(20+i*28,240+(i*17)%50,7,3,DK);
+if(s==4)h='<path d="M0 236Q100 214 200 234T400 228V300H0z" fill="'+c+'"/>';
+return h},
+tree:function(s,c){var h=R(342,170,12,62,BR),i;
+if(s==0)h+=Ci(348,150,34,c)+Ci(330,168,22,c)+Ci(368,168,22,c);
+if(s==1)h=R(344,190,8,40,BR)+Pg("348,100 320,150 376,150",c)+Pg("348,125 314,178 382,178",c)+Pg("348,150 308,205 388,205",c);
+if(s==2)h+=Ep(348,140,26,48,c);
+if(s==3)h+=Ci(328,172,24,c)+Ci(368,166,26,c)+Ci(348,138,26,c);
+if(s==4){h+=Ci(348,148,30,c);for(i=0;i<10;i++)h+=Ci(348+Math.cos(i*.63)*34,148+Math.sin(i*.63)*34,9,c)}
+return h},
+path:function(s,c){var h='',i;
+if(s==0)h=Pg("185,228 215,228 250,300 150,300",c);
+if(s==1)h=Ln("M200 224Q140 252 215 268T205 300",c,26);
+if(s==2)[[200,238],[214,254],[192,270],[210,288]].forEach(function(p){h+=Ep(p[0],p[1],15,7,c)});
+if(s==3)h=Pg("175,228 225,228 285,300 115,300",c);
+if(s==4)for(i=0;i<9;i++)h+=Ci(190+(i%3)*10+i*2,230+i*8,7,c);
+return h},
+chim:function(s,c){
+if(s==1)return R(248,76,42,40,c)+R(244,70,50,8,c);
+if(s==2)return R(238,66,16,50,c)+R(274,66,16,50,c)+R(235,62,22,6,c)+R(271,62,22,6,c);
+if(s==3)return R(262,84,22,30,c)+Ci(273,74,6,"#9aa4ad99")+Ci(280,62,8,"#9aa4ad88")+Ci(272,46,10,"#9aa4ad66");
+var h=R(262,58,22,55,c)+R(258,52,30,8,c);return s==4?h+Pg("258,52 273,38 288,52",c):h},
+floor:function(s,c){var h,x;
+if(s==1)return R(70,214,260,16,c);
+if(s==2){h=R(80,214,240,7,c);for(x=92;x<310;x+=44)h+=R(x,221,7,11,c);return h}
+if(s==3)return R(80,212,240,10,c)+R(70,222,260,10,c);
+h=R(80,212,240,18,c);if(s==4)for(x=80;x<320;x+=30)h+=Ln('M'+x+' 212v18',DK);return h},
+walls:function(s,c){var h=R(90,120,220,94,c),t='',x,y,r,rh,w;
+if(s==1||s==3){rh=s==1?8:16;w=s==1?22:44;for(y=120+rh;y<214;y+=rh)t+='M90 '+y+'H310';for(y=120,r=0;y<214;y+=rh,r++)for(x=90+(r%2)*w/2;x<310;x+=w)t+='M'+x+' '+y+'v'+rh}
+if(s==2)for(x=106;x<310;x+=16)t+='M'+x+' 120V214';
+if(s==4)for(y=126;y<214;y+=6)t+='M90 '+y+'H310';
+return h+(t?Ln(t,DK):'')},
+win:function(s,c){return [112,252].map(function(x){var y=138,f='fill="'+GL+'" stroke="'+c+'" stroke-width="4"';
+if(s==1)return '<path d="M'+x+' '+(y+38)+'v-22a18 18 0 0 1 36 0v22z" '+f+'/>';
+if(s==2)return '<circle cx="'+(x+18)+'" cy="'+(y+19)+'" r="19" '+f+'/>';
+if(s==3)return '<rect x="'+(x-6)+'" y="'+(y+8)+'" width="48" height="24" '+f+'/>';
+if(s==4)return '<rect x="'+(x+4)+'" y="'+(y-6)+'" width="28" height="52" '+f+'/>';
+return '<rect x="'+x+'" y="'+y+'" width="36" height="38" '+f+'/>'}).join("")},
+door:function(s,c){var k=Ci(207,183,2.5,"#F4D77A");
+if(s==1)return '<path d="M185 214V162a15 15 0 0 1 30 0V214z" fill="'+c+'"/>'+k;
+if(s==2)return R(172,148,56,66,c)+Ln("M200 148V214",DK,2)+Ci(195,183,2.5,"#F4D77A")+Ci(205,183,2.5,"#F4D77A");
+if(s==3)return R(185,148,30,66,c)+R(190,154,20,30,GL)+k;
+if(s==4)return R(185,148,30,66,c)+Ci(200,166,8,GL)+k;
+return R(185,148,30,66,c)+k},
+roof:function(s,c){var h=["68,126 200,48 332,126","78,126 200,22 322,126","68,124 68,106 332,106 332,124","68,126 110,70 290,70 332,126"][s];
+h=s==4?'<path d="M80 124Q200 -10 320 124z" fill="'+c+'"/>':Pg(h,c);
+return h+R(62,124,276,6,c)+R(62,124,276,6,DK)},
+vane:function(s,c,d){var p=RY[d.roof?d.roof[0]:0],y=p-32,h=Ln('M200 '+p+'V'+(p-26),c,3);
+if(s==0)return h+Pg("200,"+(p-26)+" 222,"+(p-21)+" 200,"+(p-16),c);
+if(s==1)return h+R(200,p-26,22,12,c);
+if(s==2)return h+Pg("200,"+(y-8)+" 203,"+(y-2)+" 210,"+(y-2)+" 204,"+(y+2)+" 206,"+(y+9)+" 200,"+(y+4)+" 194,"+(y+9)+" 196,"+(y+2)+" 190,"+(y-2)+" 197,"+(y-2),c);
+if(s==3)return h+Ci(200,p-30,6,c);
+return h+Ln('M200 '+(p-26)+'V'+(p-36)+'M190 '+(p-26)+'H210M194 '+(p-18)+'H206',c,2)},
+fence:function(s,c){var h='',x;
+[[0,122],[278,400]].forEach(function(g){var a=g[0],b=g[1],w=b-a;
+if(s==0){for(x=a+4;x<b-6;x+=14)h+=R(x,236,9,34,c);h+=R(a,244,w,5,c)}
+if(s==1){for(x=a+2;x<b;x+=40)h+=R(x,232,6,40,c);h+=R(a,240,w,5,c)+R(a,254,w,5,c)}
+if(s==2)h+=R(a,244,w,28,c)+R(a,240,w,6,c)+R(a,240,w,6,DK)+Ln('M'+a+' 258H'+b+'M'+a+' 266H'+b,DK);
+if(s==3)for(x=a+8;x<b;x+=16)h+=Ci(x,254,14,c);
+if(s==4){for(x=a+2;x<b;x+=30)h+=R(x,236,4,36,BR);h+=Ln('M'+a+' 244H'+b+'M'+a+' 254H'+b+'M'+a+' 264H'+b,c,1.5)}});
+return h},
+flow:function(s,c){return [104,126,148,252,274,296].map(function(x,i){var y=208+i%2*4,h=Ln('M'+x+' '+(y+4)+'V224',"#2F7D3A",2);
+if(s==0)return h+Ci(x,y,6,c);
+if(s==1)return h+Ep(x,y-2,5,8,c);
+if(s==2)return h+Ci(x,y,8,c)+Ci(x,y,3,"#F5CF3A");
+if(s==3)return Ci(x,214,11,GR)+Ci(x-4,210,3,c)+Ci(x+4,216,3,c);
+return Ln('M'+x+' 190V224',"#2F7D3A",2)+Ci(x,190,9,"#F5CF3A")+Ci(x,190,4,c)}).join("")},
+mail:function(s,c){var p=R(106,246,5,28,BR);
+if(s==1)return p+R(98,234,24,14,c)+R(120,226,3,14,c)+R(120,226,9,5,"#D64545");
+if(s==2)return R(94,166,18,16,c)+R(98,170,10,3,DK);
+if(s==3)return p+Ci(108,238,12,c);
+if(s==4)return R(104,230,9,44,BR)+R(96,222,26,14,c)+Pg("94,224 109,212 124,224",c);
+return p+R(98,234,24,14,c)},
+pots:function(s,c){var h='',a;
+[171,229].forEach(function(x){
+if(s==0)h+='<path d="M'+(x-7)+' 214h14l-2 14h-10z" fill="'+c+'"/>'+Ci(x,208,9,GR);
+if(s==1)h+='<path d="M'+(x-7)+' 214h14l-2 14h-10z" fill="'+c+'"/>'+Ln('M'+x+' 206V150',GR,4)+Ci(x-5,170,5,GR)+Ci(x+5,190,5,GR)+Ci(x-5,205,6,GR);
+if(s==3)h+=R(x-11,198,22,30,c)+Ln('M'+(x-11)+' 208h22M'+(x-11)+' 218h22',DK,2)+Ci(x,198,9,GR);
+if(s==4)h+=Ci(x,218,11,c)+R(x-5,206,10,8,c)+Ci(x,200,9,GR)});
+if(s==2)[112,252].forEach(function(x){h+=R(x-4,180,44,9,c)+Ci(x+6,178,5,GR)+Ci(x+18,177,5,GR)+Ci(x+30,178,5,GR)});
+return h}};
+var ORD=["sky","lawn","tree","path","chim","floor","walls","win","door","roof","vane","fence","flow","mail","pots"];
+function draw(ch,fin,pv,hl){
+var d=Object.assign({},ch),o='',k,i;if(pv)d[pv.k]=[pv.s,pv.c];
+
+o+=R(0,0,400,300,"#D5DEE4")+R(0,228,400,72,"#B9C5CC");
+for(i=0;i<ORD.length;i++){k=ORD[i];
+if(!d[k]){if(fin)continue;if(k=="walls")o+='<rect x="90" y="120" width="220" height="94" fill="none" stroke="#7B8D9C" stroke-width="2" stroke-dasharray="6 5"/>';
+if(k=="roof")o+='<polygon points="68,126 200,48 332,126" fill="none" stroke="#7B8D9C" stroke-width="2" stroke-dasharray="6 5"/>';continue}
+if((k=="win"||k=="door")&&!d.walls)continue;
+o+='<g'+(k===hl?' class="new"':'')+'>'+D[k](d[k][0],d[k][1],d)+'</g>'}
+return '<svg viewBox="0 0 400 300" role="img" aria-label="House drawing">'+o+'</svg>'}
+var app=document.getElementById("app"),S={},LOCAL=[],DB=null,UID=null,OWNER=false;
+if(window.claude&&claude.use){claude.use("db").then(function(x){DB=x}).catch(function(){});claude.use("user").then(function(u){if(!u)return;if(u.id)u.id().then(function(i){UID=i}).catch(function(){});u.isOwner().then(function(v){OWNER=!!v;var b=document.getElementById("nb");if(b)b.hidden=!OWNER}).catch(function(){})}).catch(function(){})}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function shuffle(q){var a=q[1].map(function(t,i){return{t:t,c:i===q[2]}}),i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x}return a}
+function hdr(){return '<div class="top"><h1>Build your house</h1><div class="row"><button class="ghost" id="nh">Play</button><button class="ghost" id="nb"'+(OWNER?'':' hidden')+'>Leaderboard</button></div></div>'}
+function nav(){var a=document.getElementById("nh"),b=document.getElementById("nb");if(a)a.onclick=home;if(b)b.onclick=board}
+function bar(){var h='<div class="bar" aria-label="Progress">',i;for(i=0;i<15;i++)h+='<i class="'+(i<S.built?'d':(i===S.i&&S.ph!=="end"?'n':''))+'"></i>';return h+'</div>'}
+function home(){S={ph:"home"};
+app.innerHTML=hdr()+'<div class="card start"><h2>Welcome, future architect</h2><p>Answer 15 architecture maths questions. Every right answer lets you design a part of your house: pick a style and a colour and watch it appear. One wrong answer ends the build. Your house is saved when the game ends.</p><label for="nm" class="meta">Your name</label><input id="nm" maxlength="20" autocomplete="given-name" placeholder="Type your name"><button class="primary" id="go">Start building</button></div>';nav();
+var i=document.getElementById("nm"),go=function(){var v=i.value.trim();if(!v){i.focus();return}S={name:v,i:0,ch:{},built:0,ph:"q",last:null,gid:"g"+Date.now().toString(36)+Math.random().toString(36).slice(2,6)};S.a=shuffle(Q[0]);game()};
+document.getElementById("go").onclick=go;i.onkeydown=function(e){if(e.key==="Enter")go()}}
+function game(){
+var q=Q[S.i],fin=S.ph==="end",pt=PT[S.i]||[],h=hdr()+'<h2>'+esc(S.name)+'’s house</h2>'+bar()+'<div class="grid"><div class="card" id="hs">'+draw(S.ch,fin,S.sel&&S.ph==="pick"?{k:pt[0],s:S.sel.s,c:S.sel.c}:null,S.last)+'</div><div class="card">';
+if(S.ph==="q")h+='<div class="meta">Question '+(S.i+1)+' of 15</div><h2>'+esc(q[0])+'</h2><div class="ans">'+S.a.map(function(a,k){return '<button data-k="'+k+'">'+esc(a.t)+'</button>'}).join("")+'</div><div id="fb"></div>';
+else if(S.ph==="pick"){var pal=PAL[pt[2]];h+='<div class="meta">Question '+(S.i+1)+' of 15</div><h2>Correct! Design your '+pt[1]+'</h2><h3>Style</h3><div class="chips" id="st">'+pt[3].map(function(n,k){return '<button data-k="'+k+'"'+(k==S.sel.s?' class="sel"':'')+'>'+n+'</button>'}).join("")+'</div><h3>Colour</h3><div class="sws" id="cl">'+pal.map(function(c,k){return '<button data-k="'+k+'" aria-label="Colour '+(k+1)+'" style="background:'+c+'"'+(c==S.sel.c?' class="sel"':'')+'></button>'}).join("")+'</div><p style="margin-top:14px">The preview updates as you choose.</p><button class="primary" id="ok">Build it</button>'}
+else{var all=S.built===15;h+='<div class="center"><h2>'+(all?'Master architect, '+esc(S.name)+'!':'Your build has stopped')+'</h2><p class="score">'+S.built+' of 15 parts designed</p><p>'+(all?'Every question right. Your dream house is complete.':'The house stays unfinished, exactly as you left it.')+'</p><p id="sv">Saving your house…</p><div class="row" style="justify-content:center">'+(OWNER?'<button class="primary" id="lb">See leaderboard</button>':'')+'<button class="ghost" id="ag">Build another house</button></div></div>'}
+app.innerHTML=h+'</div></div>';nav();bind()}
+function bind(){var q=Q[S.i],pt=PT[S.i]||[],e;
+if(S.ph==="q")app.querySelectorAll(".ans button").forEach(function(b){b.onclick=function(){answer(+b.dataset.k)}});
+if(S.ph==="pick"){var pal=PAL[pt[2]],up=function(){document.getElementById("hs").innerHTML=draw(S.ch,false,{k:pt[0],s:S.sel.s,c:S.sel.c},null);
+app.querySelectorAll("#st button").forEach(function(b){b.classList.toggle("sel",+b.dataset.k==S.sel.s)});
+app.querySelectorAll("#cl button").forEach(function(b){b.classList.toggle("sel",pal[+b.dataset.k]==S.sel.c)})};
+app.querySelectorAll("#st button").forEach(function(b){b.onclick=function(){S.sel.s=+b.dataset.k;up()}});
+app.querySelectorAll("#cl button").forEach(function(b){b.onclick=function(){S.sel.c=pal[+b.dataset.k];up()}});
+document.getElementById("ok").onclick=place}
+if(S.ph==="end"){var lb=document.getElementById("lb");if(lb)lb.onclick=board;document.getElementById("ag").onclick=home;submit()}}
+function answer(k){
+var bs=app.querySelectorAll(".ans button"),ok=S.a[k].c;
+bs.forEach(function(b,j){b.disabled=true;if(S.a[j].c)b.classList.add("ok");else if(j===k)b.classList.add("bad")});
+var fb=document.getElementById("fb");
+if(ok){fb.innerHTML='<p class="msg ok">Correct!</p>';setTimeout(function(){S.ph="pick";S.sel={s:0,c:PAL[PT[S.i][2]][0]};game()},650)}
+else{fb.innerHTML='<p class="msg bad">Not quite. The right answer is highlighted. Your build stops here.</p><button class="primary" id="fin">See my house</button>';document.getElementById("fin").onclick=function(){S.ph="end";S.last=null;game()}}}
+function place(){var pt=PT[S.i];S.ch[pt[0]]=[S.sel.s,S.sel.c];S.last=pt[0];S.built++;S.i++;S.sel=null;
+if(S.i>=15){S.ph="end";S.last=null}else{S.ph="q";S.a=shuffle(Q[S.i])}
+game();window.scrollTo(0,0)}
+function submit(){
+var e={id:UID||S.gid,name:S.name,built:S.built,at:Date.now(),ch:S.ch},el=function(t){var x=document.getElementById("sv");if(x)x.textContent=t};
+LOCAL=LOCAL.filter(function(x){return x.id!==e.id});LOCAL.push(e);
+if(!DB){el("Saved for this session only.");return}
+var r=DB.collection("scores").doc(e.id);
+r.get().then(function(s){if(s.exists&&s.data().built>e.built){el("Your earlier, higher score was kept.");return}
+return r.set({name:e.name,built:e.built,at:e.at,chs:JSON.stringify(e.ch)}).then(function(){el("Your house was saved!")})}).catch(function(){el("Couldn’t save to the shared board. Your score is kept for this session.")})}
+function getBoard(){
+if(!DB)return Promise.resolve({list:LOCAL.slice(),shared:false});
+var t=new Promise(function(res){setTimeout(function(){res(null)},10000)});
+return Promise.race([DB.collection("scores").get().then(function(sn){return{shared:true,list:sn.docs.map(function(d){var x=d.data(),c={};try{c=JSON.parse(x.chs||"{}")}catch(e){}return{id:d.id,name:x.name||"Player",built:x.built||0,at:x.at||0,ch:c}})}}).catch(function(){return null}),t]).then(function(r){return r||{list:LOCAL.slice(),shared:false}})}
+function board(){if(!OWNER){home();return}S.ph="board";
+app.innerHTML=hdr()+'<div class="card"><h2>Leaderboard</h2><p>Loading…</p></div>';nav();
+getBoard().then(function(r){if(S.ph!=="board")return;
+var l=r.list.sort(function(a,b){return b.built-a.built||a.at-b.at}),me=UID||S.gid,h=hdr()+'<div class="card"><h2>Leaderboard</h2>'+(r.shared?'':'<p>Showing this session only. The shared leaderboard isn’t available here.</p>');
+if(!l.length)h+='<p>No houses yet. Be the first to build one!</p>';
+h+='<div class="lb">'+l.map(function(x,i){return '<div class="lbr'+(x.id===me?' me':'')+'"><div class="rk">'+(i+1)+'</div><div>'+draw(x.ch,true)+'</div><div><div class="nm">'+esc(x.name)+'</div><div class="meta">'+x.built+' of 15 parts designed</div></div><button class="ghost" data-i="'+i+'">View house</button></div>'}).join("")+'</div></div>';
+app.innerHTML=h;nav();
+app.querySelectorAll(".lbr button").forEach(function(b){b.onclick=function(){show(l[+b.dataset.i])}})})}
+function show(x){S.ph="show";
+var det=PT.filter(function(p){return x.ch[p[0]]}).map(function(p){var v=x.ch[p[0]];return '<span><i class="dot" style="background:'+esc(v[1])+'"></i>'+p[1]+': '+p[3][v[0]]+'</span>'}).join("");
+app.innerHTML=hdr()+'<div class="card"><div class="top"><h2 style="margin:0">'+esc(x.name)+'’s house</h2><button class="ghost" id="bk">Back to leaderboard</button></div><p>'+x.built+' of 15 parts designed</p>'+draw(x.ch,true)+'<h3>Design choices</h3><div class="det">'+(det||'Nothing was built yet.')+'</div></div>';nav();
+document.getElementById("bk").onclick=board}
+home();
+</script>
+</body>
+</html>
